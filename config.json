@@ -1,0 +1,4 @@
+{
+  "bcryptRounds": 10,
+  "jwtExpiresIn": "24h"
+}
