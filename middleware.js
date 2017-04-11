@@ -61,71 +61,17 @@ const store = (req, res, next) => {
   if (!req.params.storeId) return res.status(404).send('No store id provided')
   const header = req.headers['x-store-auth']
   if (!header) return res.status(401).send('No store access header provided')
-  if (header.substr(0,2) == 'p ')
-    Store.findById(req.params.storeId, {include: [{model: User, as: 'owner', attributes: ['id', 'name']}]})
-    .then(store => {
-      if (!store)
-        return Promise.reject(new AppError(404, 'store not found'))
-      if (store.access > 0) {
-        const password = header.substr(2, header.length-2)
-        const pwLinkHash = crypto.createHash('sha256').update(password+store.get('linkHash')).digest('hex')
-        bcrypt.compare(pwLinkHash, store.get('password'), (err, result) => {
-          if (err || !result)
-            return res.status(401).send('invalid password')
-          req.store = store
-          next()
-        })
-      } else if (!req.user)
-        return Promise.reject(new AppError(401, 'store not authenticated'))
-      else {
-        store.hasMember(req.user)
-        .then(hasUsr => {
-          if (!hasUsr)
-            return Promise.reject(new AppError(403, 'Not authorized to access store'))
-          const password = header.substr(2, header.length-2)
-          const pwLinkHash = crypto.createHash('sha256').update(password+store.get('linkHash')).digest('hex')
-          bcrypt.compare(pwLinkHash, store.get('password'), (err, result) => {
-            if (err || !result)
-              return res.status(401).send('invalid store password')
-            req.store = store
-            next()
-          })
-        })
-        .catch(e => {
-          if (e.httpstatus)
-            return res.status(e.httpstatus).send(e.message)
-          res.status(500).send(e.message)
-        })
-      }
-    })
-    .catch(e => {
-      if (e.httpstatus)
-        return res.status(e.httpstatus).send(e.message)
+  helpers.getStoreIfAllowed(req.params.storeId, header, req.user)
+  .then(store => {
+    req.store = store
+    next()
+  })
+  .catch(e => {
+    if (e.httpstatus)
+      res.status(e.httpstatus).send(e.message)
+    else
       res.status(500).send(e.message)
-    })
-  else if (header.substr(0,2) == 'l ')
-    Store.findById(req.params.id)
-    .then(store => {
-      if (!store)
-        return Promise.reject(new AppError(404, 'store not found'))
-      if (store.access > 1) {
-        const pwLinkHash = header.substr(2, header.length-2)
-        bcrypt.compare(pwLinkHash, store.get('password'), (err, result) => {
-          if (err || !result)
-            return res.status(403).send('invalid link')
-          req.store = store
-          next()
-        })
-      } else
-        return Promise.reject(new AppError(403, 'link access not allowed'))
-    })
-    .catch(e => {
-      if (e.httpstatus)
-        return res.status(e.httpstatus).send(e.message)
-      res.status(500).send(e.message)
-    })
-  else
-    res.status(401).send('Invalid access header provided')
+  })
 }
 
 
