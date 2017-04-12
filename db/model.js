@@ -86,6 +86,10 @@ const File = db.define('file', {
   salt: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  size: {
+    type: Sequelize.INTEGER,
+    default: 0
   }
 })
 

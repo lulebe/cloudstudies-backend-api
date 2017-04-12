@@ -9,10 +9,12 @@ const Store = require('../db/model').Store
 module.exports = (req, res) => {
   if (!req.body.fileSize)
     return res.status(400).send('no fileSize specified')
+  let file
   File.findById(req.params.fileId)
-  .then(file => {
-    if (!file)
+  .then(f => {
+    if (!f)
       return Promise.reject(new AppError(404, 'file not found'))
+    file = f
     return file.getFolder()
   })
   .then(folder => {
@@ -20,7 +22,8 @@ module.exports = (req, res) => {
   })
   .then(store => {
     store.size += parseInt(req.body.fileSize)
-    return store.save()
+    file.size = req.body.fileSize
+    return Promise.all([store.save(), file.save()])
   })
   .then(() => {
     res.status(200).send()

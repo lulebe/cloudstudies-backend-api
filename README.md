@@ -14,6 +14,7 @@
 - `DBSSLCERT`mysql db ssl certificate
 - `DBSSLCA` mysql db ssl ca certificate
 - `JWTSECRET` jwt secret
+- `JWTFILES` jwt secret for file access
 - `MAILGUNKEY` mailgun.com api key
 - `INTERNAL_AUTH_KEY` authentication key for communating with other servers
 
