@@ -7,6 +7,7 @@ const File = require('../db/model').File
 const Folder = require('../db/model').Folder
 const Store = require('../db/model').Store
 const User = require('../db/model').User
+const config = require('../config.json')
 
 module.exports = (req, res) => {
   if (!req.body.storeAuthentication)
@@ -26,6 +27,7 @@ module.exports = (req, res) => {
 function addFile (res, fileName, folderId, storeAuthentication, user) {
   let folder = null
   let file = null
+  let store = null
   return Folder.findById(folderId)
   .then(f => {
     if (!f)
@@ -33,7 +35,8 @@ function addFile (res, fileName, folderId, storeAuthentication, user) {
     folder = f
     return helpers.getStoreIfAllowed(folder.get('storeId'), storeAuthentication, user)
   })
-  .then(() => {
+  .then(s => {
+    store = s
     return Promise.fromNode(cb => crypto.randomBytes(32, cb))
   })
   .then(buf => {
@@ -44,7 +47,9 @@ function addFile (res, fileName, folderId, storeAuthentication, user) {
     file.setFolder(folder)
   })
   .then(() => {
-    res.status(201).send(file.toJSON())
+    const fileResponse = file.toJSON()
+    fileResponse.maxSize = config.maxStoreSize - store.size //max 3GB store size
+    res.status(201).send(fileResponse)
   })
   .catch(e => {
     if (e.httpstatus)

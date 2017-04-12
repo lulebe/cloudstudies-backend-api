@@ -51,6 +51,11 @@ const Store = db.define('store', {
   description: {
     type: Sequelize.TEXT,
     allowNull: true
+  },
+  size: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    default: 0
   }
 })
 

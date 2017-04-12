@@ -13,15 +13,15 @@ module.exports = (req, res) => {
   helpers.decodeJwt(req.body.userAuthentication, (err, user) => {
     if (err || !user)
       return res.status(403).send('no permission')
-    return removeFile(res, req.params.fileId, req.body.storeAuthentication, user)
+    return removeFile(res, req.params.fileId, req.body.storeAuthentication, req.body.fileSize || 0, user)
   })
 }
 
-function removeFile (res, fileId, storeAuthentication, user) {
+function removeFile (res, fileId, storeAuthentication, fileSize, user) {
   let file = null
   File.findById(fileId)
   .then(f => {
-    if (!file)
+    if (!f)
       return Promise.reject(new AppError(404, 'file not found'))
     file = f
     return file.getFolder()
@@ -32,6 +32,10 @@ function removeFile (res, fileId, storeAuthentication, user) {
   .then(store => {
     if (store.ownerId != user.id)
       return Promise.reject(new AppError(403, 'no permission'))
+    store.size -= fileSize
+    if (store.size < 0)
+      store.size = 0
+    store.save()
     return file.destroy()
   })
   .then(() => {
