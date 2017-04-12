@@ -15,7 +15,12 @@ module.exports = (req, res) => {
   .then(validation => {
     if (!validation.isEmpty())
       return res.status(400).send(validation.useFirstErrorOnly().mapped())
-    User.findOne({where: {'$or': [{'name': req.body.username}, {'email': req.body.email || null}]}})
+    let whereClause
+    if (req.body.email)
+      whereClause = {'$or': [{'name': req.body.username}, {'email': req.body.email}]}
+    else
+      whereClause = {name: req.body.username}
+    User.findOne({where: whereClause})
     .then(foundUser => {
       if (foundUser)
         return Promise.reject(new AppError(403, 'User exists already'))
