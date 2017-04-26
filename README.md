@@ -17,6 +17,7 @@
 - `JWTFILES` jwt secret for file access
 - `MAILGUNKEY` mailgun.com api key
 - `INTERNAL_AUTH_KEY` authentication key for communating with other servers
+- `UPLOAD_URL` path to upload server (needed to notify for reencryption of files)
 
 # Users
 

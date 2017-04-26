@@ -3,8 +3,10 @@ const Promise = require('bluebird')
 const AppError = require('../error')
 const Folder = require('../db/model').Folder
 
+const folderNameRegex = /^[a-z0-9\-_\. ]+$/i
+
 module.exports = (req, res) => {
-  req.checkBody('shortname', 'invalid name').notEmpty().matches(/^[a-z0-9 ]+$/i)
+  req.checkBody('shortname', 'invalid name').notEmpty().matches(folderNameRegex)
   req.checkBody('parentId', 'no parent specified').notEmpty().isInt()
   req.getValidationResult()
   .then(validation => {

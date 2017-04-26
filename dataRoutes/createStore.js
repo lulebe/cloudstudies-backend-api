@@ -33,6 +33,7 @@ module.exports = (req, res) => {
       password: linkPwHashBcrypt,
       access: req.body.access,
       linkHash: linkhash,
+      size: 0,
       folders: [{name: '/', noDelete: true}]
     }, {include: [Folder]})
   })
