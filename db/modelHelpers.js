@@ -93,7 +93,7 @@ module.exports = {
         }
       } else if (header.substr(0,2) == 'l ') {
         if (store.access > 1) {
-          const pwLinkHash = header.substr(2, header.length-2)
+          const pwLinkHash = header.split(' ').pop()
           return Promise.fromNode(cb => bcrypt.compare(pwLinkHash, store.get('password'), cb))
           .then(result => {
             if (!result)

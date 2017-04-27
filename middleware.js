@@ -60,7 +60,7 @@ const internalAuth = (req, res, next) => {
 const store = (req, res, next) => {
   if (!req.params.storeId) return res.status(404).send('No store id provided')
   const header = req.headers['x-store-auth']
-  if (!header) return res.status(401).send('No store access header provided')
+  if (!header) return res.status(423).send('No store access header provided')
   helpers.getStoreIfAllowed(req.params.storeId, header, req.user)
   .then(store => {
     req.store = store

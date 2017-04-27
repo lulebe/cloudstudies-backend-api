@@ -131,6 +131,9 @@ Folder.belongsTo(Folder, {as: 'parent', foreignKey: 'parentId'})
 Folder.hasMany(File)
 File.belongsTo(Folder)
 
+Store.hasMany(File)
+File.belongsTo(Store)
+
 Folder.hasMany(Test)
 Test.belongsTo(Folder)
 

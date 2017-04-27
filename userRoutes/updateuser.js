@@ -17,6 +17,7 @@ module.exports = (req, res) => {
       if (req.body.oldPassword) {
         //re-encrypt userdata
         req.user.getData().then(userdata => {
+          if (!userdata) return
           const decipher = crypto.createDecipher('aes256', req.body.oldPassword)
           const decrypted = Buffer.concat([decipher.update(userdata.data) , decipher.final()])
           const cipher = crypto.createCipher('aes256', req.body.password)
@@ -25,7 +26,7 @@ module.exports = (req, res) => {
           userdata.save()
         }).catch(e => {})
       } else
-        req.user.getData().then(userdata => userdata.destroy()).catch(e => {})
+        req.user.getData().then(userdata => userdata && userdata.destroy()).catch(e => {})
       req.user.password = pwhash
       saveUpdated(user, res)
     })
