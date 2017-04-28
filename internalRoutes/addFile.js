@@ -49,6 +49,13 @@ function addFile (res, fileName, folderId, storeAuthentication, user) {
   .then(() => {
     const fileResponse = file.toJSON()
     fileResponse.maxSize = config.maxStoreSize - store.size //max 3GB store size
+    const authParts = storeAuthentication.split(' ')
+    let auth
+    if (authParts[0] == 'p')
+      auth = crypto.createHash('sha256').update(authParts[1]+store.get('linkHash')).digest('hex')
+    else
+      auth = authParts[1]
+    fileResponse.key = crypto.createHash('sha256').update(auth+file.get('salt')).digest('base64')
     res.status(201).send(fileResponse)
   })
   .catch(e => {

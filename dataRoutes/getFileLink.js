@@ -23,10 +23,16 @@ module.exports = (req, res) => {
     helpers.getStoreIfAllowed(folder.storeId, header, req.user)
   })
   .then(store => {
+    const authParts = header.split(' ')
+    let auth
+    if (authParts[0] == 'p')
+      auth = crypto.createHash('sha256').update(authParts[1]+store.get('linkHash')).digest('hex')
+    else
+      auth = authParts[1]
     const token = jwt.sign(
                     {
                       id: req.params.fileId,
-                      auth: crypto.createHash('sha256').update(header.split(' ').pop()+file.salt).digest('base64')
+                      auth: crypto.createHash('sha256').update(auth+file.salt).digest('base64')
                     },
                     process.env.JWTFILES,
                     {expiresIn: 6000})
