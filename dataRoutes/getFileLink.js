@@ -20,7 +20,7 @@ module.exports = (req, res) => {
     return file.getFolder()
   })
   .then(folder => {
-    helpers.getStoreIfAllowed(folder.storeId, header, req.user)
+    return helpers.getStoreIfAllowed(folder.storeId, header, req.user)
   })
   .then(store => {
     const authParts = header.split(' ')
@@ -32,13 +32,14 @@ module.exports = (req, res) => {
     const token = jwt.sign(
                     {
                       id: req.params.fileId,
-                      auth: crypto.createHash('sha256').update(auth+file.salt).digest('base64')
+                      auth: crypto.createHash('sha256').update(auth+file.get('salt')).digest('base64')
                     },
                     process.env.JWTFILES,
                     {expiresIn: 6000})
     res.status(200).send({token})
   })
   .catch(e => {
+    console.log(e)
     if (e.httpstatus)
       res.status(e.httpstatus).send(e.message)
     else
