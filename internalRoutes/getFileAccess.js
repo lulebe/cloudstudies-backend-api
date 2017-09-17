@@ -33,6 +33,8 @@ function getAccess (res, fileId, storeAuthentication, user) {
     return helpers.getStoreIfAllowed(folder.get('storeId'), storeAuthentication, user)
   })
   .then(store => {
+    if (store.reencrypting)
+      return res.status(409).send('reencrypting')
     const fileResponse = file.toJSON()
     const authParts = storeAuthentication.split(' ')
     let auth

@@ -23,6 +23,8 @@ module.exports = (req, res) => {
     return helpers.getStoreIfAllowed(folder.storeId, header, req.user)
   })
   .then(store => {
+    if (store.reencrypting)
+      return res.status(409).send('reencrypting')
     const authParts = header.split(' ')
     let auth
     if (authParts[0] == 'p')

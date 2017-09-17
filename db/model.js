@@ -55,6 +55,10 @@ const Store = db.define('store', {
     type: Sequelize.INTEGER,
     allowNull: false,
     default: 0
+  },
+  reencrypting: {
+    type: Sequelize.BOOLEAN,
+    default: false
   }
 })
 

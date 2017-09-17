@@ -7,17 +7,15 @@ const router = require('express').Router()
 router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({extended: false}))
 
-router.get('/new', logger)
-router.post('/new', logger)
+router.post('/new', (req, res) => {
+  const durationRaw = req.body.option_selection1
+  const storeId = req.body.option_selection2
+  let durationMonths = 1
+  if (durationRaw == '3 Months')
+    durationMonths = 3
+  else if (durationRaw == '6 Months')
+    durationMonths = 6
+  //TODO handle payment
+})
 
 module.exports = router
-
-function logger (req, res) {
-  console.log('NEW PAYMENT')
-  console.log(req.query)
-  console.log(req.body)
-  console.log(req.params)
-  console.log(req.method)
-  console.log('-----------')
-  res.status(200).send()
-}
