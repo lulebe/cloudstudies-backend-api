@@ -1,6 +1,7 @@
 const Mailgun = require('mailgun').Mailgun
 const randomstring = require('randomstring')
 const bcrypt = require('bcrypt')
+const crypto = require('crypto')
 
 const config = require('../config.json')
 const User = require('../db/model').User
@@ -22,7 +23,9 @@ module.exports = (req, res) => {
     const email = user.getDataValue('email')
     if (!email)
       return new AppError(404, 'Email was not found')
-    const newpw = randomstring.generate(12)
+    let newpw = randomstring.generate(12)
+    newpw = crypto.createHash('sha256').update(newpw).digest('base64')
+    newpw.replace(/\//g, '_').replace(/\+/g, '-').replace(/=/g, '')
     bcrypt.hash(newpw, config.bcryptRounds, (err, pwhash) => {
       if (err)
         return new AppError(500, 'Password could not be hashed.')
