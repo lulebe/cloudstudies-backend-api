@@ -44,7 +44,10 @@ function addFile (res, fileName, folderId, storeAuthentication, user) {
   })
   .then(f => {
     file = f
-    file.setFolder(folder)
+    return file.setFolder(folder)
+  })
+  .then(() => {
+    return file.setStore(store)
   })
   .then(() => {
     const fileResponse = file.toJSON()
