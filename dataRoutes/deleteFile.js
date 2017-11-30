@@ -9,6 +9,7 @@ module.exports = (req, res) => {
   const header = req.headers['x-store-auth']
   if (!header) return res.status(401).send('No store access header provided')
   let file = null
+  let store = null
   File.findById(req.params.fileId)
   .then(f => {
     if (!f)
@@ -16,7 +17,8 @@ module.exports = (req, res) => {
     file = f
     return helpers.getStoreIfAllowed(file.storeId, header, req.user)
   })
-  .then(() => {
+  .then(s => {
+    store = s
     axios({
       method: 'POST',
       url: process.env.UPLOAD_URL+'/internal/deleteFiles',
@@ -25,6 +27,13 @@ module.exports = (req, res) => {
         files: [file.id]
       }
     })
+  })
+  .then(() => {
+    store.size = store.size - file.size
+    return Promise.all([store.save(), file.destroy()])
+  })
+  .then(() => {
+    res.status(204).send()
   })
   .catch(e => {
     if (e.httpstatus)

@@ -73,6 +73,7 @@
 - get Info and Folders: `GET /stores/:storeid` with AUTHORIZATION Token & Store password
 - add Folder: `POST /stores/:storeid/folders` with AUTHORIZATION Token & Store password, folder shortname, parentId
 - delete Folder: `DELETE /folders/:folderid` with AUTHORIZATION Token & Store password (only owner)
+- delete File: `DELETE /file/:fileid` with AUTHORIZATION Token & Store password (only owner)
 - get Tests: `GET /folders/:folderid/tests` with AUTHORIZATION Token & Store password
 - create Test: `POST /folders/:folderid/tests` with AUTHORIZATION Token & Store password
 - get Test: `GET /tests/:testid` with AUTHORIZATION Token & Store password
