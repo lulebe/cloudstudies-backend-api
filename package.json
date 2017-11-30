@@ -16,6 +16,7 @@
     "express": "^4.15.0",
     "express-jwt": "^5.1.0",
     "express-validator": "^3.1.2",
+    "flightplan": "^0.6.17",
     "jsonwebtoken": "^7.3.0",
     "mailgun": "^0.5.0",
     "mysql": "^2.13.0",
@@ -23,7 +24,5 @@
     "randomstring": "^1.1.5",
     "sequelize": "^3.30.2"
   },
-  "devDependencies": {
-    "flightplan": "^0.6.15"
-  }
+  "devDependencies": {}
 }
