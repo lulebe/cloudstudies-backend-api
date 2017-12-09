@@ -23,10 +23,10 @@ module.exports = (req, res) => {
     const email = user.getDataValue('email')
     if (!email)
       return new AppError(404, 'Email was not found')
-    let newpw = randomstring.generate(12)
-    newpw = crypto.createHash('sha256').update(newpw).digest('base64')
-    newpw.replace(/\//g, '_').replace(/\+/g, '-').replace(/=/g, '')
-    bcrypt.hash(newpw, config.bcryptRounds, (err, pwhash) => {
+    const newpw = randomstring.generate(12)
+    let newpwhash = crypto.createHash('sha256').update(newpw).digest('base64')
+    newpwhash = newpwhash.replace(/\//g, '_').replace(/\+/g, '-').replace(/=/g, '')
+    bcrypt.hash(newpwhash, config.bcryptRounds, (err, pwhash) => {
       if (err)
         return new AppError(500, 'Password could not be hashed.')
       //set new password
