@@ -55,6 +55,11 @@ const Store = db.define('store', {
     type: Sequelize.INTEGER,
     allowNull: false,
     default: 0
+  },
+  maxSize: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    default: 3221225472
   }
 })
 

@@ -51,7 +51,7 @@ function addFile (res, fileName, folderId, storeAuthentication, user) {
   })
   .then(() => {
     const fileResponse = file.toJSON()
-    fileResponse.maxSize = config.maxStoreSize - store.size //max 3GB store size
+    fileResponse.maxSize = store.maxSize - store.size //max 3GB store size
     const authParts = storeAuthentication.split(' ')
     let auth
     if (authParts[0] == 'p')

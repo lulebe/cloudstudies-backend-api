@@ -12,7 +12,7 @@ module.exports = (req, res) => {
     return folder.getStore()
   })
   .then(store => {
-    const maxSize = config.maxStoreSize - store.size //max 3GB per Store
+    const maxSize = store.maxSize - store.size //max 3GB per Store
     res.status(200).send({maxSize})
   })
   .catch(e => {
