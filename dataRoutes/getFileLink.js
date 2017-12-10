@@ -28,14 +28,21 @@ module.exports = (req, res) => {
     const authParts = header.split(' ')
     let auth
     if (authParts[0] == 'p')
-      auth = crypto.createHash('sha256').update(authParts[1]+store.get('linkHash')).digest('hex')
+      auth = authParts[1]+store.get('linkHash')
     else
       auth = authParts[1]
+    auth = crypto.createHash('sha256').update(auth).digest()
+    const decipher = crypto.createDecipher('aes-256-cbc', auth)
+    const filekey = Buffer.concat([decipher.update(file.get('password'),'base64'), decipher.final()])
+    const jwtData = {
+      id: req.params.fileId,
+      auth: filekey.toString('base64'),
+      iv: file.get('iv'),
+      authTag: file.get('authTag'),
+      size: file.get('size')
+    }
     const token = jwt.sign(
-                    {
-                      id: req.params.fileId,
-                      auth: crypto.createHash('sha256').update(auth+file.get('salt')).digest('base64')
-                    },
+                    jwtData,
                     process.env.JWTFILES,
                     {expiresIn: 6000})
     res.status(200).send({token})

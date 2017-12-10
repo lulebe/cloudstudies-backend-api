@@ -33,16 +33,18 @@ function getAccess (res, fileId, storeAuthentication, user) {
     return helpers.getStoreIfAllowed(folder.get('storeId'), storeAuthentication, user)
   })
   .then(store => {
-    if (store.reencrypting)
-      return res.status(409).send('reencrypting')
     const fileResponse = file.toJSON()
     const authParts = storeAuthentication.split(' ')
     let auth
     if (authParts[0] == 'p')
-      auth = crypto.createHash('sha256').update(authParts[1]+store.get('linkHash')).digest('hex')
+      auth = authParts[1]+store.get('linkHash')
     else
       auth = authParts[1]
-    fileResponse.key = crypto.createHash('sha256').update(auth+file.get('salt')).digest('base64')
+    auth = crypto.createHash('sha256').update(auth).digest()
+    const decipher = crypto.createDecipher('aes-256-cbc', auth)
+    const fileKey = Buffer.concat([decipher.update(file.get('password'),'base64'), decipher.final()])
+    delete fileResponse.password
+    fileResponse.key = fileKey.toString('base64')
     res.status(201).send(fileResponse)
   })
   .catch(e => {

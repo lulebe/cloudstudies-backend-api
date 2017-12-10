@@ -28,6 +28,7 @@ function addFile (res, fileName, folderId, storeAuthentication, user) {
   let folder = null
   let file = null
   let store = null
+  let pw = null
   return Folder.findById(folderId)
   .then(f => {
     if (!f)
@@ -40,7 +41,22 @@ function addFile (res, fileName, folderId, storeAuthentication, user) {
     return Promise.fromNode(cb => crypto.randomBytes(32, cb))
   })
   .then(buf => {
-    return File.create({name: fileName, salt: buf.toString('base64')})
+    pw = buf
+    return Promise.fromNode(cb => crypto.randomBytes(16, cb))
+  })
+  .then(buf => {
+    let iv = buf.toString('base64')
+    const authParts = storeAuthentication.split(' ')
+    let auth
+    if (authParts[0] == 'p')
+      auth = authParts[1]+store.get('linkHash')
+    else
+      auth = authParts[1]
+    auth = crypto.createHash('sha256').update(auth).digest()
+    const cipher = crypto.createCipher('aes-256-cbc', auth)
+    let pwenc = cipher.update(pw, '', 'base64')
+    pwenc += cipher.final('base64')
+    return File.create({name: fileName, password: pwenc, iv: iv})
   })
   .then(f => {
     file = f
@@ -51,17 +67,13 @@ function addFile (res, fileName, folderId, storeAuthentication, user) {
   })
   .then(() => {
     const fileResponse = file.toJSON()
-    fileResponse.maxSize = store.maxSize - store.size //max 3GB store size
-    const authParts = storeAuthentication.split(' ')
-    let auth
-    if (authParts[0] == 'p')
-      auth = crypto.createHash('sha256').update(authParts[1]+store.get('linkHash')).digest('hex')
-    else
-      auth = authParts[1]
-    fileResponse.key = crypto.createHash('sha256').update(auth+file.get('salt')).digest('base64')
+    fileResponse.maxSize = store.maxSize - store.size
+    delete fileResponse.password
+    fileResponse.key = pw.toString('base64')
     res.status(201).send(fileResponse)
   })
   .catch(e => {
+    console.log(e)
     if (e.httpstatus)
       res.status(e.httpstatus).send(e.message)
     else

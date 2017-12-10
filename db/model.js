@@ -59,7 +59,7 @@ const Store = db.define('store', {
   maxSize: {
     type: Sequelize.INTEGER,
     allowNull: false,
-    default: 3000000000
+    default: 3221225472
   }
 })
 
@@ -87,9 +87,17 @@ const File = db.define('file', {
     type: Sequelize.STRING,
     allowNull: false
   },
-  salt: {
+  password: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  iv: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  authTag: {
+    type: Sequelize.STRING,
+    allowNull: true
   },
   size: {
     type: Sequelize.INTEGER,

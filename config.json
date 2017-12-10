@@ -1,5 +1,5 @@
 {
   "bcryptRounds": 10,
   "jwtExpiresIn": "24h",
-  "maxStoreSize": 3221225472
+  "defaultMaxSize": 3221225472
 }

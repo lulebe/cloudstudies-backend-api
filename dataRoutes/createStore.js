@@ -34,6 +34,7 @@ module.exports = (req, res) => {
       access: req.body.access,
       linkHash: linkhash,
       size: 0,
+      maxSize: config.defaultMaxSize,
       folders: [{name: '/', noDelete: true}]
     }, {include: [Folder]})
   })

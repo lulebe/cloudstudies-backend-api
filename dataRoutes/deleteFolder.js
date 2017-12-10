@@ -22,7 +22,7 @@ module.exports = (req, res) => {
   .then(filesList => {
     axios({
       method: 'POST',
-      url: process.env.UPLOAD_URL+'/internal/deleteFiles',
+      url: process.env.UPLOAD_URL+'/internal/files/delete',
       headers: {Authorization: 'i '+process.env.INTERNAL_AUTH_KEY},
       data: {
         files: filesList

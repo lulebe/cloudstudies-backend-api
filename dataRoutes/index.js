@@ -19,6 +19,8 @@ const getFileLink = require('./getFileLink')
 const updateStore = require('./updateStore')
 const deleteFile = require('./deleteFile')
 const deleteFolder = require('./deleteFolder')
+const moveFile = require('./moveFile')
+const renameFile = require('./renameFile')
 
 router.post('/stores', [mw.auth], createStore)
 router.get('/stores', [mw.auth], searchStores)
@@ -30,5 +32,7 @@ router.post('/stores/:storeId/folders', [mw.auth, mw.store], addFolder)
 router.delete('/folder/:folderId', [mw.auth], deleteFolder)
 router.get('/file/:fileId', [mw.authOptional], getFileLink)
 router.delete('/file/:fileId', [mw.auth], deleteFile)
+router.put('/file/:fileId/folder', [mw.auth], moveFile)
+router.put('/file/:fileId/name', [mw.auth], renameFile)
 
 module.exports = router

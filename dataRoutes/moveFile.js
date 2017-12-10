@@ -1,9 +1,9 @@
 const Promise = require('bluebird')
-const axios = require('axios')
 
 const AppError = require('../error')
 const helpers = require('../db/modelHelpers')
 const File = require('../db/model').File
+const Folder = require('../db/model').Folder
 
 module.exports = (req, res) => {
   const header = req.headers['x-store-auth']
@@ -19,22 +19,16 @@ module.exports = (req, res) => {
   })
   .then(s => {
     store = s
-    axios({
-      method: 'POST',
-      url: process.env.UPLOAD_URL+'/internal/files/delete',
-      headers: {Authorization: 'i '+process.env.INTERNAL_AUTH_KEY},
-      data: {
-        files: [file.id]
-      }
-    })
-    .catch(e => console.log(e))
+    return Folder.findById(req.body.folderId)
   })
-  .then(() => {
-    store.size = store.size - file.size
-    return Promise.all([store.save(), file.destroy()])
+  .then(folder => {
+    if (folder.storeId !== file.storeId)
+      return Promise.reject(new AppError(403, 'folder does not belong to same store'))
+    file.folderId = folder.id
+    return file.save()
   })
-  .then(() => {
-    res.status(204).send()
+  .then(savedFile => {
+    res.status(200).send()
   })
   .catch(e => {
     if (e.httpstatus)

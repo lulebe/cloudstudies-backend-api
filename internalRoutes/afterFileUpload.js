@@ -23,6 +23,7 @@ module.exports = (req, res) => {
   .then(store => {
     store.size += parseInt(req.body.fileSize)
     file.size = req.body.fileSize
+    file.authTag = req.body.authTag
     return Promise.all([store.save(), file.save()])
   })
   .then(() => {
