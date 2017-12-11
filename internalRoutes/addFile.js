@@ -48,11 +48,10 @@ function addFile (res, fileName, folderId, storeAuthentication, user) {
     let iv = buf.toString('base64')
     const authParts = storeAuthentication.split(' ')
     let auth
-    if (authParts[0] == 'p')
-      auth = authParts[1]+store.get('linkHash')
-    else
-      auth = authParts[1]
-    auth = crypto.createHash('sha256').update(auth).digest()
+    if (authParts[0] == 'p') {
+      auth = crypto.createHash('sha256').update(authParts[1]+store.get('linkHash')).digest()
+    } else
+      auth = Buffer.from(authParts[1], 'hex')
     const cipher = crypto.createCipher('aes-256-cbc', auth)
     let pwenc = cipher.update(pw, '', 'base64')
     pwenc += cipher.final('base64')

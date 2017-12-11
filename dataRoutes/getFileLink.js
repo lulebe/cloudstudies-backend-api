@@ -27,11 +27,10 @@ module.exports = (req, res) => {
       return res.status(409).send('reencrypting')
     const authParts = header.split(' ')
     let auth
-    if (authParts[0] == 'p')
-      auth = authParts[1]+store.get('linkHash')
-    else
-      auth = authParts[1]
-    auth = crypto.createHash('sha256').update(auth).digest()
+    if (authParts[0] == 'p') {
+      auth = crypto.createHash('sha256').update(authParts[1]+store.get('linkHash')).digest()
+    } else
+      auth = Buffer.from(authParts[1], 'hex')
     const decipher = crypto.createDecipher('aes-256-cbc', auth)
     const filekey = Buffer.concat([decipher.update(file.get('password'),'base64'), decipher.final()])
     const jwtData = {
