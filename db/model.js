@@ -132,8 +132,8 @@ User.hasOne(Userdata, {as: 'Data'})
 User.hasMany(Store, {as: 'ownedStores', foreignKey: 'ownerId'})
 Store.belongsTo(User, {as: 'owner', foreignKey: 'ownerId'})
 
-Store.belongsToMany(User, {as: 'members', through: 'StoreUsers', foreignKey: 'storeId'})
-User.belongsToMany(Store, {as: 'stores', through: 'StoreUsers', foreignKey: 'userId'})
+Store.belongsToMany(User, {as: 'members', through: 'storeusers', foreignKey: 'storeId'})
+User.belongsToMany(Store, {as: 'stores', through: 'storeusers', foreignKey: 'userId'})
 
 Store.hasMany(Folder)
 Folder.belongsTo(Store)
