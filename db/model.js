@@ -102,6 +102,10 @@ const File = db.define('file', {
   size: {
     type: Sequelize.INTEGER,
     default: 0
+  },
+  previewFileCount: {
+    type: Sequelize.INTEGER,
+    default: 0
   }
 })
 

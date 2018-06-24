@@ -11,6 +11,7 @@ const removeFileForce = require('./removeFileForce')
 const getFileAccess = require('./getFileAccess')
 const getAllowedSize = require('./getAllowedSize')
 const afterFileUpload = require('./afterFileUpload')
+const setFilePreviews = require('../setFilePreviews')
 
 router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({extended: false}))
@@ -22,5 +23,6 @@ router.delete('/filedelete/:fileId', [mw.internalAuth], removeFileForce)
 router.post('/fileaccess/:fileId', [mw.internalAuth], getFileAccess)
 router.get('/allowedsize/:folderId', [mw.internalAuth], getAllowedSize)
 router.post('/fileuploaded/:fileId', [mw.internalAuth], afterFileUpload)
+router.post('/previewsgenerated/:fileId', [mw.internalAuth], setFilePreviews)
 
 module.exports = router
