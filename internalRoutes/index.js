@@ -11,7 +11,7 @@ const removeFileForce = require('./removeFileForce')
 const getFileAccess = require('./getFileAccess')
 const getAllowedSize = require('./getAllowedSize')
 const afterFileUpload = require('./afterFileUpload')
-const setFilePreviews = require('../setFilePreviews')
+const setFilePreviews = require('./setFilePreviews')
 
 router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({extended: false}))
